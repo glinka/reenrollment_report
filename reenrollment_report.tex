@@ -1,0 +1,57 @@
+%% This document should serve as a base for most mathematically
+%% oriented documents. There is probably a better way to do this.
+
+\documentclass[12pt]{article}
+%\renewcommand\thesubsection{\thesection.\alph{subsection}}
+\usepackage{graphicx, subcaption, amsfonts, amsmath, amsthm, empheq}
+\newtheorem*{thm:jnf}{Jordan normal form for square matrices}
+%% some new commands I have no idea how they work
+\newcommand*\widefbox[1]{\fbox{\hspace{2em}#1\hspace{2em}}}
+\newlength\dlf
+\newcommand\alignedbox[2]{
+  % Argument #1 = before & if there were no box (lhs)
+  % Argument #2 = after & if there were no box (rhs)
+  % Alignment sign of the line
+  {
+    \settowidth\dlf{$\displaystyle #1$}  
+    % The width of \dlf is the width of the lhs, with a displaystyle font
+    \addtolength\dlf{\fboxsep+\fboxrule}  
+    % Add to it the distance to the box, and the width of the line of the box
+    \hspace{-\dlf}  
+    % Move everything dlf units to the left, so that & #1 #2 is aligned under #1 & #2
+    \boxed{#1 #2}
+    % Put a box around lhs and rhs
+  }
+}
+%% end new commands I have no idea how they work
+\newcommand{\K}[1]{\mathcal{K}^{#1}}
+\newcommand{\Kk}{\mathcal{K}^k}
+\newcommand{\Forall}{\; \forall \;}
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+\DeclareMathOperator*{\argmin}{\arg\!\min}
+\captionsetup{labelformat=empty,labelsep=none}
+\usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
+\setlength\parindent{0pt}
+\graphicspath{ {./figs/} }
+\pagestyle{plain}
+\begin{document}
+\title{\vspace{-1cm}Equation free analysis of a multigraph model and dimensionality reduction in sloppy models}
+\author{\LARGE By Alexander Holiday\vspace{3mm}\\\Large  under the supervision of\vspace{3mm}\\\LARGE  Professor Yannis Kevrekidis}
+\date{03/25/2015}
+% \maketitle
+
+% \begin{abstract}
+%   Over the past year, a vastly improved coarse-projective integration scheme was developed for the dynamically evolving multigraph system. With this algorithmic advance came the ability to implement a coarse fixed-point solver which successfully locates stationary states of the system. Additionally, DMAPS, in conjunction with a suitable distance measure between data points, was applied to the problem to confirm the underlying low-dimensional system. In a different direction, we have recently begun applying DMAPS to parameter sets in sloppy models with the aim of both aiding optimization in these settings and reducing model complexity.
+% \end{abstract}
+
+\section{Introduction}
+  Three main areas of research have emerged over the past year: equation free modelling of dynamically evolving networks, dimensionality reduction of these network systems, and dimensionality reduction of models in which one or more parameters may take a wide range of values without significantly affecting model output, termed ``sloppy'' models. \\
+  In the field of equation free modelling, coarse-projective integration (CPI) schemes were developed for a voting model and a multigraph model, accelerating system simulations in both cases. A coarse Newton method was subsequently implemented for the multigraphs, enabling direct computation of stationary states. In the future, we wish to build off these methods to create bifurcation tracking algorithm and to perform coarse optimization. \\
+  The dimensionality reduction technique DMAPS was succesfully applied to the multigraph system, uncovering a low-dimensional embedding. In the process, we necessarily encountered the issue of defining a distance between data points when each data point is itself a network. This was addressed by using a random-walk based measure. Future plans in this direction involve developing a suitable metric in the context of the voting model in which nodes of the network are labeled, causing previous methods to fail. \\
+  Parameter reduction in sloppy models remains in an early stage. We have used DMAPS to embed parameters in sloppy parameter combinations, and are working towards the complementary problem of embedding into meaningful parameter combinations. Once this is accomplished, we would like to devise a way of optimizing the model in this embedded space, eliminating the problems encountered when working with the full, sloppy model.
+  Apart from the future goals already mentioned, we also look to improve on previous work done in the group in the area of mixed integer linear optimization as it applies to generating networks with prescribed properties.
+
+\section{}
+
+\end{document}
+
