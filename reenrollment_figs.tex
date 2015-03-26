@@ -1,0 +1,67 @@
+% figures for inclusion in appendix of reenrollment
+\section*{Figures}
+
+\begin{centering}
+
+\begin{figure}[h!]
+  \centering
+  \begin{subfigure}{0.5\linewidth}
+    \includegraphics[width=\linewidth]{n500_n3_tp}
+    \caption{Initialized as  random graph}
+    \label{mm:evo1}
+  \end{subfigure}%
+  \begin{subfigure}{0.5\linewidth}
+    \includegraphics[width=\linewidth]{n500_n3_tp_lopsided}
+    \caption{Initialized with half nodes fully connected, half nodes no connection}
+    \label{mm:evo2}
+  \end{subfigure}%
+  \caption{Evolution of degree sequences in multigraph model}
+  \label{mm:evo}
+\end{figure}
+
+\newpage
+\begin{landscape}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{lifting_restriction_schematic}
+  \caption{Overview of restriction (red) and lifting (blue) operations}
+  \label{mm:schematic}
+\end{figure}
+
+\end{landscape}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.8\linewidth]{n500_n3_dp_comp}
+  \caption{Relative error between CPI-accelerated simulations and plain simulations}
+  \label{mm:cpi}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.8\linewidth]{newton_error}
+  \caption{Decrease of error in coarse Newton iterations}
+  \label{mm:newton}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \begin{subfigure}{0.5\linewidth}
+    \captionsetup{width=0.8\linewidth}
+    \includegraphics[width=\linewidth]{dmaps_short}
+    \caption{Embedding of different initial conditions on short timescales. Two distinct trajectories emerge.}
+    \label{mm:dmaps1}
+  \end{subfigure}%
+  \begin{subfigure}{0.5\linewidth}
+    \captionsetup{width=0.8\linewidth}
+    \includegraphics[width=\linewidth]{dmaps_long_temp}
+    \caption{Embedding of different initial conditions on long timescales. The two trajectories meet at the shared stationary point}
+    \label{mm:dmaps2}
+  \end{subfigure}%
+  \caption{DMAPS embeddings of multigraph model}
+  \label{mm:evo}
+\end{figure}
+
+
+\end{centering}
