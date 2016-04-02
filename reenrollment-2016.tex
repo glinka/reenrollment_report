@@ -74,20 +74,69 @@ modified version of Diffusion Maps. In one case, graphs were sampled
 periodically as they evolved in time. Two separate trajectories were
 used with two different initial conditions, but other parameters were set
 such that these two distinct systems evolved to a common stationary
-state. This is exhibited in Fig. (\ref{fig:dmaps-evo}), which shows a
+state. This is exhibited in Fig. (\ref{fig:dmaps-results}), which shows a
 Diffusion Map of the two trajectories. Initially, their dissimilar
 initial conditions lead them to be embedded far from each other, but
 as they evolve towards the shared stationary state, the embeddings
 overlap. \\
 
-The second case involved a collection of graphs at different
+\begin{figure}[h!]
+  \vspace{-5mm}
+  \centering
+  \begin{subfigure}{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{dmaps-3d-convergence-a}
+    \subcaption{\label{fig:dmaps-results-regular}}
+  \end{subfigure} %
+  \begin{subfigure}{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{dmaps-3d-convergence-zoom-a}
+    \subcaption{\label{fig:dmaps-results-zoom}}
+  \end{subfigure}%
+  \caption{DMAP of motif-based embeddings from two separate simulation
+    trajectories: (a) embedding of two trajectories on different
+    timescales. While the trajectories are initially embedded in
+    separate regions due to their different initial conditions,
+    they're eventually mapped close together as they evolve to the
+    same coarse stationary state. Final states are circled, and point
+    size grows as more steps are taken in each trajectory. (b)
+    Enlarged view of the final points in the previous plot, revealing
+    the approach to a similar final state. Here, the average of the
+    final fifty points is circled. Due to the stochastic nature of
+    the system, the final embeddings randomly fluctuate about the
+    shared stationary state. \label{fig:dmaps-results}}
+\end{figure}
+
+\noindent The second case involved a collection of graphs at different
 stationary states. Theory predicts that this high-dimensional ensemble
 is described by just two model
-parameters. Fig. (\ref{fig:dmaps-ensemble}) shows a Diffusion Map of
+parameters \cite{rath_multigraph_2012, rath_time_2012}. Fig. (\ref{fig:dmaps-ensemble}) shows a Diffusion Map of
 this dataset, and illustrates its ability to uncover this hidden
 low-dimensional description. \\
 
-In addition to these new findings, we achieved improvements in the
+\begin{figure}[h!]
+  \vspace{-5mm}
+  \centering
+  \begin{subfigure}{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{dmaps-2d-rho-a}
+    \subcaption{\label{fig:dmaps-rho}}
+  \end{subfigure} %
+  \begin{subfigure}{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{dmaps-2d-kappa-a}
+    \subcaption{\label{fig:dmaps-kappa}}
+  \end{subfigure}%
+  \caption{DMAP of motif-based embeddings from collection of different
+    simulations run with different parameter values: (a) coloring the
+    two-dimensional DMAPS embedding with $\rho$ and (b) coloring the
+    two-dimensional DMAPS embedding with $\kappa$. As with PCA, DMAPS
+    uncovered the variables governing the stationary state, known from
+    Bal\'{a}zs' paper \label{fig:dmaps-ensemble}}
+\end{figure}
+
+
+\noindent In addition to these new findings, we achieved improvements in the
 stability of our previous equation-free techniques. This followed from
 the development of a more constrained projection operator in our
 coarse-projective integration scheme which ensures that the total
@@ -95,86 +144,38 @@ number of edges is conserved throughout the simulation.
 
 \subsection*{Model sloppiness}
 
+Our research into model sloppiness has progressed steadily, and we've succesfully developed a variation of Diffusion Maps that captures the significant parameter combinations instead of the sloppy, ill-constrained ones. While the normal implementation of the method would use a kernel of the form
+
+\begin{align}
+  k(\theta_i, \theta_j) = \exp(-\frac{\| \theta_i - \theta_j\|^2}{\epsilon^2})
+\end{align}
+
+\noindent where $\theta_i$ is the $i^{th}$ set of parameters \cite{coifman_diffusion_2006}, by expanding it to include the model predictions at $\theta_i$, denoted $\mu(\theta_i)$, we can create a sort of anisotropic diffusion that prefers directions along which model predictions vary \cite{lafon_stephane_diffusion_2004}. This kernel takes the form
+
+\begin{align}
+  k(\theta_i, \theta_j) = \exp(-\frac{\| \theta_i - \theta_j\|^2}{\epsilon^2} - \frac{\| \mu(\theta_i) - \mu(\theta_j)\|^2}{\lambda^2})
+\end{align}
+
+\noindent and $\lambda$ is an additional parameter whose effect is similar to that of $\epsilon$ in the sense that it defines a meaningful neighborhood for each prediction $\mu(\theta_i)$. \\
+
+\noindent As we continued, it became increasingly apparent that viewing sloppiness through the lens of optimization was unproductive, and that it should instead be considered in terms of the more basic interaction between parameter space and actual model predictions. This concept is illustrated in Fig. (\ref{fig:mm}) in which different regions of model space (top figures) are mapped to wildly different volumes of parameter space (bottom figures). In this particular case, sloppiness arises as a byproduct of a singular perturbation in the system such that for any $1/ \epsilon$ large enough, the model predictions remain nearly constant. Thus the large black region of parameter space in the lower figure maps to a relatively small surface in model-prediction space, while the small ellipse in parameter space maps to a relatively large surface. \\
+
+\begin{figure}[h!]
+  \vspace{-5mm}
+  \centering
+  \includegraphics[width=\textwidth]{mm-fig-v3}
+  \caption{Illustration of sloppiness arising in singularly perturbed system. Model predictions (top) map to certain parameter comibinations (bottom). However, if a set of parameters correspond to a singularly perturbed system ($1/\epsilon$ large in this case) then large regions of parameter space are mapped to a very small region in model prediction space. \label{fig:mm}}
+\end{figure}
 
 
-\indent Three main areas of research have emerged over the past year:
-equation free modeling of dynamically evolving networks,
-dimensionality reduction of these network systems, and dimensionality
-reduction of models in which one or more parameters may take a wide
-range of values without significantly affecting model output, termed
-``sloppy'' models \cite{Gutenkunst2007}. \\
+\noindent There are many directions for future work. \textbf{First, we would like to develop a method of efficiently sampling parameter space.} By using a sort of directed Monte Carlo method, we believe we can guide the sampling procedure to quickly cover a certain region of parameter space: a sloppy surface, for instance. \textbf{We could then combine this sampling routine with our anisotropic DMAPS kernl to optimize models in DMAPS space, instead of in the sloppy parameter space.} This would also require an applicatin of geometric harmonics \cite{coifman_geometric_2006, chiavazzo_reduced_2014} to translate between Diffusion Map coordinates and model parameters, but would be an interesting application of many different dimensionality-reduction techniques. \textbf{Finally, we would like to apply these methods to real-world systems \cite{boender_risk_2007}.} Preliminary analysis of Prof. Brynildsen's data performed several months ago seemed promising, and more could be done at this stage.
 
-\indent In the field of equation free modeling, coarse-projective
-integration (CPI) schemes were developed for a voting model and a
-multigraph model \cite{Rath2012} \cite{Durrett2012}, accelerating
-system simulations in both cases. Representative degree sequence
-trajectories for the multigraph model are shown in
-Figs. (\ref{mm:evo1}) and (\ref{mm:evo2}), and the lifting and
-restriction operations are outlined in Fig. (\ref{mm:schematic}). The
-error incurred in the CPI routine is shown in Fig. (\ref{mm:cpi}). A
-coarse Newton method was subsequently implemented for the multigraphs,
-enabling direct computation of stationary states. The decrease in
-error as the Newton method progresses is visible in
-Fig. (\ref{mm:newton}). \textbf{In the future, we wish to build off
-  these methods to create a bifurcation tracking algorithm and to
-  perform coarse optimization}. \\
-
-\indent The dimensionality reduction technique DMAPS was successfully
-applied to the multigraph system, uncovering a low-dimensional
-embedding. In the process, we necessarily encountered the issue of
-defining a distance between data points when each point is itself a
-network. This was addressed by using a random-walk based measure shown
-in \cite{Rajendran2013}. The resulting embedding, shown in
-Fig. (\ref{mm:dmaps2}), reveals that though the system's initial
-conditions may vary, trajectories will eventually evolve to the same
-stationary state and thus be embedded in the same
-point. \textbf{Future plans in this direction involve developing a
-  suitable metric in the context of the voting model in which nodes of
-  the network are labeled}. \\
-
-\indent Parameter reduction in sloppy models remains in an early
-stage. We have used DMAPS to uncover sloppy parameter directions and
-are working towards developing an embedding that retains the
-meangingful, tightly constrained parameters while removing the sloppy
-ones. Once this is accomplished, \textbf{we would like to devise a
-  method of optimizing the model in this embedded space, eliminating
-  the problems encountered when working with the full, sloppy
-  model}. We are currently trying to use ideas from \cite{Dsilva} and
-\cite{Lafon2004} to generate useful embeddings. \\
-
-\indent Apart from the future goals already mentioned, \textbf{we also
-  look to improve on previous work done in the group in the area of
-  mixed integer linear optimization as it applies to generating
-  networks with prescribed properties} \cite{Gounaris2013}. We are
-interested in increasing the speed through more thorough
-preconditioning and by developing tighter convex relaxations of the
-constraints.
-
-% \section*{Equation free modeling}
-% The main focus has been on the evolving multigraph model detailed in \cite{Rath2012}. In brief, the system dynamics exhibit preferential attachment such that whichever nodes have a high number of connections, or ``degree'', at time $t$ are more likely to increase their degree at time $t+1$, while those with a small degree are less likely to increase their connection count. This is the ``rich-get-richer'' phenomenon found in many real-world networks. Regardless of the initial network configuration, these dynamics eventually bring the system to a stationary state sequence of degrees. Figs. (\ref{mm:evo1}) and (\ref{mm:evo2}) depict the evolution of degree sequence for two different initial conditions. 
-% \subsection*{Coarse projective integration}
-% As the degree sequence evolves smoothly and contains a good estimation of the state of this particular system by tracking just how ``rich'' and ``poor'' the individuals have become, it was investigated as a potential coarse variable for the model. However, in order to further reduce the problem's dimensionality, the sorted degree sequence was fit to a fifth-order polynomial and the fitted polynomial's coefficients recorded as a surrogate for the full, detailed system. Fig. (\ref{mm:schematic}) depicts this process of ``restricting'' the full scale system, a multigraph containing all the nodes and all the connections between them, to a suitable coarse system, a vector of polynomial coefficients arising from fitting the multigraph's degree sequence. The inverse process of ``lifting'', transforming the polynomial coefficients into a full network, is straightforward: first take $n$ evenly spaced evaluations of the complete polynomial and round to create a vector of $n$ integers: the new degree sequence. Then use a modified Havel-Hakimi algorithm, described here \cite{S.L.Hakimi1962}, to create a multigraph from this degree sequence. \\
-% With the lifting and restriction operators defined as above, a CPI routine for the multigraph model was implemented. To evaluate its accuracy, trajectories of CPI-accelerated simulations were compared to those without CPI. Fig. (\ref{mm:cpi}) shows this relative error. The small errors incurred validate the CPI procedure which reduces the number of direct simulation steps by 40%.
-% \subsection*{Coarse fixed point finding}
-% The success of the CPI routine enabled a coarse Newton method. In such a scheme, matrix-vector products involving the Jacobian are approximated as directional derivatives, which are in turn estimated through finite differences. Our coarse Newton method successfully locates the multigraph's stationary states, which would otherwise be found through expensive direct simulation. If we denote by $d^{(k)}$ the sorted degree sequence at iteration $k$ and define the error at $k$ as $e^{(k)} = d^{(k)} - d^{(k-1)}$, then Fig. (\ref{mm:newton}) shows the error in the 1-norm of $e^{(k)}$ as the solution progresses.
-% \subsection*{Dimensionality reduction}
-% The DMAPS algorithm was used to uncover a low-dimensional embedding of the multigraph system. To do this, it was necessary to define some notion of similarity between two different graphs. Our approach, based on \cite{Rajendran2013}, was to compare distributions of random walks over each graph. The reasoning is simple: if the distributions of random walkers were similar, the underlying networks would be likely also be similar. When combined with this distance measure, DMAPS did uncover a low-dimensional description of the multigraph system. Figs. (\ref{mm:dmaps1}) and (\ref{mm:dmaps2}) show embeddings from data taken over two different timescales. In the Fig. (\ref{mm:dmaps1}), two graphs initialized with very different initial conditions were sampled over a short $n^2$ timescale. Here we clearly see two distinct one-dimensional embeddings for each initial condition. However, as these graphs evolved they approached identical stationary states. Thus, when sampled over long timescales we would expect their embeddings to converge on a point. This is exactly the behavior exhibited in Fig. (\ref{mm:dmaps2}).
-% \section*{Sloppy models}
-% In the course of fitting models to data, it has been observed that their are often parameters such that, even when their values are varied over many orders of magnitude, the model's predictions do not change. These poorly constrained parameters are termed ``sloppy'', and the models they arise in ``sloppy models'' \cite{Gutenkunst2007}. Optimization in this setting is challenging, as traditional gradient descent algorithms become trapped in shallow valleys spanned by these sloppy directions, causing slow convergence to the minimum. Our goal is to combine DMAPS with a distance metric between points that captures information about the underlying optimization process. Hopefully the resulting embedding of parameter space would provide a better environment for optimization, one in which the sloppy directions were no longer present. We are currently trying to use ideas from \cite{Dsilva} and \cite{Lafon2004} to generate useful embeddings.
-% \section*{Network generation}
-% Applying mixed integer linear programming (MILP) to the problem of generating networks with prescribed properties led to the first general-purpose network generation algorithm capable of addressing an arbitrary number of desired network constraints \cite{Gounaris2013}. While the generality of the method was a major step forward, it suffers from slow runtimes for most problem sizes of interest; thus, we are interested in increasing the speed through more thorough problem preconditioning and by developing tighter convex relaxations of the constrains.
-% \section*{Summary of future work}
-% \begin{enumerate}
-% \item Develop distance measure for labeled graphs suitable for application in the voting model
-% \item Develop distance measure for sloppy parameter spaces that captures both meaningful parameters and optimization information
-% \item Continue work on MILP network generation algorithm to enhance speed and to provide further examples of possible network properties that can be addressed
-% \end{enumerate}
 \end{spacing}
 
 % \include{reenrollment_figs}
 
 \bibliographystyle{abbrv}
-\bibliography{$HOME/Documents/bibTex/library}
+\bibliography{./reenrollment-2016}
 
 
 \end{document}

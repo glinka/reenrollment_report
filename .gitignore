@@ -2,3 +2,8 @@
 *~
 *.pdf
 .nfs*
+/reenrollment-2016.aux
+/reenrollment-2016.bbl
+/reenrollment-2016.blg
+/reenrollment-2016.log
+/figs/
